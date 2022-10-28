@@ -8,10 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4243926890177805772}
+  - component: {fileID: 6210307581255917139}
   - component: {fileID: 4243926890177805773}
-  - component: {fileID: 83608818886073639}
-  - component: {fileID: -2762699637352741373}
+  - component: {fileID: 4374992821478837530}
   m_Layer: 0
   m_Name: enemy
   m_TagString: Untagged
@@ -19,8 +18,8 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4243926890177805772
-Transform:
+--- !u!224 &6210307581255917139
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -33,6 +32,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &4243926890177805773
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -84,7 +88,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &83608818886073639
+--- !u!114 &4374992821478837530
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,29 +97,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4243926890177805774}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f363c62f34dcb82428d75c184d678e53, type: 3}
+  m_Script: {fileID: 11500000, guid: fa58da31f1b438e4c833120ae3594882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  points: []
-  speed: 10
---- !u!50 &-2762699637352741373
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4243926890177805774}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  ehp: {fileID: 2018732528089121269, guid: 32e4a71f226852f40ae08300d7da7949, type: 3}
+  iehp: {fileID: 0}

@@ -6,10 +6,10 @@ public class overUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public void OnPointerEnter(PointerEventData eventdata)
     {
-        GameObject.Find("player").GetComponent<player>().canplace = false;
+        GameObject.Find("player").GetComponent<placetowers>().canplace = false;
     }
     public void OnPointerExit(PointerEventData eventdata)
     {
-        GameObject.Find("player").GetComponent<player>().canplace = true;
+        GameObject.Find("player").GetComponent<placetowers>().canplace = true;
     }
 }

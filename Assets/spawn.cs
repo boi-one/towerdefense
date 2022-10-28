@@ -1,15 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public class spawn : MonoBehaviour
 {
-    public List<GameObject> enemies = new List<GameObject>();
+    public List<Enemy> enemies = new List<Enemy>();
     public List<int> enemyIndexes = new List<int>();
-    private int waves = 2;
+    private int spawns = 5;
     public GameObject basicenemy;
-    private float speed = 100;
+    public bool spawning = false;
+    GameObject deadenemy;
+    public TMP_Text timertext;
+    float lasttime = 0;
+    public float lastspawn = 0f;
+    public float cooldown = 0.5f;
+    public GameObject spawnedenemy;
+    public Enemy ec;
+    public bool wave = false;
+    public int wavelength = 2;
+    public int maxwavelength = 2;
+    public float timercd = 0.5f;
+    public float newtimer = 0;
+    public GameObject ehp;
+    public int bruh = 1;
+    int enemiesspawns = -1;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,23 +40,81 @@ public class spawn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*float closestd = 999999999;
-        foreach(GameObject e in enemies)
+        wave = true;
+        spawning = false;
+        //Debug.Log(enemies.Count);
+        foreach (Enemy se in enemies.ToList()) //zorgt ervoor dat elke enemy het pad volgt
         {
-            closestd = (GameObject.Find("thebase").transform.position - e.transform.position).magnitude;
-        }*/
+            //enemies move
+            if (se.points.Count > 0)
+            {
+                se.enemyGameObject.transform.position += (se.points[0].transform.position - se.enemyGameObject.transform.position).normalized * Time.deltaTime * 10;    //(se.points[0].transform.position - se.enemyGameObject.transform.position).normalized * Time.deltaTime * se.speed;
+                if (Vector3.Distance(se.enemyGameObject.transform.position, se.points[0].transform.position) < 0.5f) //removed de dichtstbijzijnde waypoint zodat de enemy naar de volgende waypoint gaat in de list
+                    se.points.RemoveAt(0);
+            }
+            ehp.transform.localScale = new Vector3(1, 3, 0);
+            ehp.transform.position = se.enemyGameObject.transform.position;
+            //enemy does damage
+            if (Vector3.Distance(se.enemyGameObject.transform.position, GameObject.Find("player").GetComponent<player>().thebase.transform.position) < 2) //doet damage aan de base als de enemies dichtbij zijn
+            {
+                deadenemy = se.enemyGameObject;
+                if (GameObject.Find("player").GetComponent<player>().health > 0)
+                {
+                    GameObject.Find("player").GetComponent<player>().health -= se.damage;                                                           //hp fixen, checken of alle knoppen werken, schieten normaal laten werken
+                    GameObject.Find("player").GetComponent<player>().hp.value = GameObject.Find("player").GetComponent<player>().health;
+                }
+                deadenemy.transform.position = new Vector3(20, 20, 0);
+                enemies.Remove(se); //als de enemies de base raken worden ze gedestroyed
+                Destroy(deadenemy);
+                if(GameObject.Find("enemy(clone)").GetComponent<enemyhp>().iehp)
+                    GameObject.Find("enemy(clone)").GetComponent<enemyhp>().iehp.transform.localScale = new Vector3(se.hp / 10, 1, 0);
+            }   
+        }
+        //timer enemy spawns
+        if (System.Convert.ToInt32(timertext.text) > 0)
+        {
+            timertext.text = ((int)(120 - (Time.time - lasttime))).ToString();
+            if (System.Convert.ToInt32(timertext.text) == 0)
+            {
+                StartCoroutine(Spawning());
+                timertext.text = 120.ToString();
+            }
+            //Debug.Log(wavelength);
+        }
+        if (GameObject.Find("player").GetComponent<player>().health == 0 || GameObject.Find("player").GetComponent<player>().hp.value <= 0)
+            SceneManager.LoadScene("Dead");
     }
     public IEnumerator Spawning()
     {
-        for (int i = 0; i < 2; i++)//enemy amount
+        Debug.Log(wavelength);
+        for (int i = 0; i < 8; i++)
         {
-            for (int ii = 0; ii < waves; ii++)//waves
-            {
-                GameObject spawnedenemy = Instantiate(basicenemy, transform.position, transform.rotation);
-                enemies.Add(spawnedenemy);
-                enemyIndexes.Add(1);
-                yield return new WaitForSeconds(1.5f);
-            }
-        }
+            //lastspawn = Time.time + cooldown;
+            spawnedenemy = Instantiate(basicenemy, transform.position, transform.rotation);
+            List<Enemy> randomenemy = new List<Enemy>() { new Enemy() { enemyGameObject = spawnedenemy, enemyname = "basicenemy", hp = 5, speed = 100f, damage = 1 },
+            new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongerenemy", hp = 10, speed = 100f, damage = 2 },
+            new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongestenemy", hp = 20, speed = 100f, damage = 4 } };
+            ec = randomenemy[Random.Range(0, 3)];
+            enemies.Add(ec);
+            for (int ii = 0; ii < GameObject.Find("points").transform.childCount; ii++)
+                ec.points.Add(GameObject.Find("points").transform.GetChild(ii));
+            enemyIndexes.Add(1);
+            if (ec.enemyname == "basicenemy")
+                ec.enemyGameObject.GetComponent<SpriteRenderer>().color = Color.red;
+            if (ec.enemyname == "strongerenemy")
+                ec.enemyGameObject.GetComponent<SpriteRenderer>().color = Color.green;
+            if (ec.enemyname == "strongestenemy")
+                ec.enemyGameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+            yield return new WaitForSeconds(0.7f);
+        };
     }
+}
+public class Enemy
+{
+    public string enemyname;
+    public int hp;
+    public float speed;
+    public float damage;
+    public GameObject enemyGameObject;
+    public List<Transform> points = new List<Transform>();
 }
