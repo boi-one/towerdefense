@@ -91,33 +91,23 @@ public class placetowers : MonoBehaviour
             }
         }
         //check if enemy is close
-        bool fired = true;
+        //bool fired = true;
         foreach (Tower t in spawnedtowers)
         {
-            if (Time.time <= lastfire + tc.cooldown)
-            {
-                continue;               //cooldown voor het schieten van de torens
-            }
-            fired = true;
             GameObject closestenemy = null;
             float closestedist = 99999;
             foreach (Enemy e in enemies)                 //zorgt ervoor dat de enemies geschoten kunnen worden
             {
                 if ((t.position - e.enemyGameObject.transform.position).magnitude < closestedist)
                 {
-                    closestedist = (t.position - e.enemyGameObject.transform.position).magnitude;
+                    closestedist = (e.enemyGameObject.transform.position - t.position).magnitude;
                     closestenemy = e.enemyGameObject;
-                }
-                /*float diste = (t.position - e.enemyGameObject.transform.position).magnitude;
-                if (diste < closestedist)
-                {
-                    diste = closestedist;
-
-                }*/
+                }   
             }
-            if (closestedist < 8)
+            if (closestedist < t.range &&Time.time > lastfire)
             {
-                Debug.Log(closestenemy);
+                lastfire = Time.time + t.cooldown;
+                Debug.Log(spawnedtowers.Count);
                 GameObject ibullet = Instantiate(bullet, t.position, t.towerGameObject.transform.rotation);
                 bulletdict.Add(ibullet, closestenemy.transform.position
                     + ((GameObject.Find("spawner").GetComponent<spawn>().ec.points[0].transform.position
@@ -126,8 +116,6 @@ public class placetowers : MonoBehaviour
                 float dx = t.position.x - closestenemy.transform.position.x;
                 ibullet.transform.localEulerAngles = new Vector3(0, 0, Mathf.Atan2(dy, dx) * Mathf.Rad2Deg + 90);//draait de kogels in de richting van de enemy (waarschijnlijk niet meer nodig dankzij trailrenderer)
             }
-            if (fired)
-                lastfire = Time.time;
         }
         foreach (KeyValuePair<GameObject, Vector3> b in bulletdict)  //beweegt de kogels
         {
@@ -140,7 +128,7 @@ public class placetowers : MonoBehaviour
             {
                 if ((e.enemyGameObject.transform.position - bt.Key.transform.position).magnitude < 1f)
                 {
-                    e.hp -= 5;             //laat de enemies damage krijgen
+                    e.hp -= 0.5f;             //laat de enemies damage krijgen
                     if (e.hp <= 0)
                     {
                         enemies.Remove(e);
@@ -161,7 +149,7 @@ public class placetowers : MonoBehaviour
             GameObject spawnedtower = Instantiate(tower);        //plaatst een andere toren afhankelijk welke knop in de ui is ingedrukt
             if (button == 1)
             {
-                tc = new Tower() { towerGameObject = spawnedtower, towername = "basictower", cost = 20, bulletspeed = 20f, cooldown = 2f, damage = 0.5f, range = 5f };
+                Tower tc = new Tower() { towerGameObject = spawnedtower, towername = "basictower", cost = 20, bulletspeed = 20f, cooldown = 0.2f, damage = 0.5f, range = 5f };
                 spawnedtowers.Add(tc);
                 spawnedtower.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("tower1");
                 if (GameObject.Find("player").GetComponent<player>().points >= tc.cost)
@@ -176,7 +164,7 @@ public class placetowers : MonoBehaviour
             }
             if (button == 2)
             {
-                tc = new Tower() { towerGameObject = spawnedtower, towername = "tower2", cost = 25, bulletspeed = 20f, cooldown = 0.5f, damage = 0.1f, range = 3f };
+                Tower tc = new Tower() { towerGameObject = spawnedtower, towername = "tower2", cost = 25, bulletspeed = 20f, cooldown = 0.5f, damage = 0.1f, range = 3f };
                 spawnedtowers.Add(tc);
                 spawnedtower.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("tower2");
                 if (GameObject.Find("player").GetComponent<player>().points >= tc.cost)
@@ -191,7 +179,7 @@ public class placetowers : MonoBehaviour
             }
             if (button == 3)
             {
-                tc = new Tower() { towerGameObject = spawnedtower, towername = "tower3", cost = 30, bulletspeed = 40f, cooldown = 5f, damage = 1f, range = 10f };
+                Tower tc = new Tower() { towerGameObject = spawnedtower, towername = "tower3", cost = 30, bulletspeed = 40f, cooldown = 1f, damage = 1f, range = 10f };
                 spawnedtowers.Add(tc);
                 spawnedtower.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("tower3");
                 if (GameObject.Find("player").GetComponent<player>().points >= tc.cost)
@@ -206,7 +194,7 @@ public class placetowers : MonoBehaviour
             }
             if (button == 4)
             {
-                tc = new Tower() { towerGameObject = spawnedtower, towername = "tower4", cost = 35, bulletspeed = 20f, cooldown = 2f, damage = 0.5f, range = 5f };
+                Tower tc = new Tower() { towerGameObject = spawnedtower, towername = "tower4", cost = 35, bulletspeed = 20f, cooldown = 2f, damage = 0.5f, range = 5f };
                 spawnedtowers.Add(tc);
                 spawnedtower.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("tower4");
                 if (GameObject.Find("player").GetComponent<player>().points >= tc.cost)
@@ -221,7 +209,7 @@ public class placetowers : MonoBehaviour
             }
             if (button == 5)
             {
-                tc = new Tower() { towerGameObject = spawnedtower, towername = "tower5", cost = 40, bulletspeed = 20f, cooldown = 2f, damage = 0.5f, range = 5f };
+                Tower tc = new Tower() { towerGameObject = spawnedtower, towername = "tower5", cost = 40, bulletspeed = 20f, cooldown = 0.2f, damage = 0.5f, range = 5f };
                 spawnedtowers.Add(tc);
                 spawnedtower.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("tower5");
                 if (GameObject.Find("player").GetComponent<player>().points >= tc.cost)
@@ -236,7 +224,7 @@ public class placetowers : MonoBehaviour
             }
             if (button == 6)
             {
-                tc = new Tower() { towerGameObject = spawnedtower, towername = "tower6", cost = 45, bulletspeed = 20f, cooldown = 2f, damage = 0.5f, range = 5f };
+                Tower tc = new Tower() { towerGameObject = spawnedtower, towername = "tower6", cost = 45, bulletspeed = 20f, cooldown = 0.1f, damage = 0.5f, range = 5f };
                 spawnedtowers.Add(tc);
                 spawnedtower.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("tower6");
                 if (GameObject.Find("player").GetComponent<player>().points >= tc.cost)
@@ -251,7 +239,7 @@ public class placetowers : MonoBehaviour
             }
             if (button == 7)
             {
-                tc = new Tower() { towerGameObject = spawnedtower, towername = "tower7", cost = 50, bulletspeed = 20f, cooldown = 2f, damage = 0.5f, range = 5f };
+                Tower tc = new Tower() { towerGameObject = spawnedtower, towername = "tower7", cost = 50, bulletspeed = 20f, cooldown = 2f, damage = 0.5f, range = 5f };
                 spawnedtowers.Add(tc);
                 spawnedtower.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("tower7");
                 if (GameObject.Find("player").GetComponent<player>().points >= tc.cost)
@@ -266,7 +254,7 @@ public class placetowers : MonoBehaviour
             }
             if (button == 8)
             {
-                tc = new Tower() { towerGameObject = spawnedtower, towername = "tower8", cost = 55, bulletspeed = 20f, cooldown = 2f, damage = 0.5f, range = 5f };
+                Tower tc = new Tower() { towerGameObject = spawnedtower, towername = "tower8", cost = 55, bulletspeed = 20f, cooldown = 1f, damage = 0.5f, range = 5f };
                 spawnedtowers.Add(tc);
                 spawnedtower.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("tower8");
                 if (GameObject.Find("player").GetComponent<player>().points >= tc.cost)

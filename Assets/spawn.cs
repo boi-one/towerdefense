@@ -45,6 +45,8 @@ public class spawn : MonoBehaviour
         //Debug.Log(enemies.Count);
         foreach (Enemy se in enemies.ToList()) //zorgt ervoor dat elke enemy het pad volgt
         {
+            GameObject.Find("enemy(Clone)").GetComponent<enemyhp>().iehp.transform.position = se.enemyGameObject.transform.position;
+            GameObject.Find("enemy(Clone)").GetComponent<enemyhp>().iehp.transform.localScale = new Vector3(se.hp/2, 1, 0);
             //enemies move
             if (se.points.Count > 0)
             {
@@ -52,22 +54,20 @@ public class spawn : MonoBehaviour
                 if (Vector3.Distance(se.enemyGameObject.transform.position, se.points[0].transform.position) < 0.5f) //removed de dichtstbijzijnde waypoint zodat de enemy naar de volgende waypoint gaat in de list
                     se.points.RemoveAt(0);
             }
-            ehp.transform.localScale = new Vector3(1, 3, 0);
-            ehp.transform.position = se.enemyGameObject.transform.position;
             //enemy does damage
             if (Vector3.Distance(se.enemyGameObject.transform.position, GameObject.Find("player").GetComponent<player>().thebase.transform.position) < 2) //doet damage aan de base als de enemies dichtbij zijn
             {
                 deadenemy = se.enemyGameObject;
-                if (GameObject.Find("player").GetComponent<player>().health > 0)
+                if (GameObject.Find("player").GetComponent<player>().health > 0f)
                 {
-                    GameObject.Find("player").GetComponent<player>().health -= se.damage;                                                           //hp fixen, checken of alle knoppen werken, schieten normaal laten werken
+                    GameObject.Find("player").GetComponent<player>().health -= se.damage;                                                           
                     GameObject.Find("player").GetComponent<player>().hp.value = GameObject.Find("player").GetComponent<player>().health;
+                    
                 }
                 deadenemy.transform.position = new Vector3(20, 20, 0);
                 enemies.Remove(se); //als de enemies de base raken worden ze gedestroyed
                 Destroy(deadenemy);
-                if(GameObject.Find("enemy(clone)").GetComponent<enemyhp>().iehp)
-                    GameObject.Find("enemy(clone)").GetComponent<enemyhp>().iehp.transform.localScale = new Vector3(se.hp / 10, 1, 0);
+                Destroy(GameObject.Find("enemy(Clone)").GetComponent<enemyhp>().iehp);
             }   
         }
         //timer enemy spawns
@@ -87,13 +87,13 @@ public class spawn : MonoBehaviour
     public IEnumerator Spawning()
     {
         Debug.Log(wavelength);
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 1; i++)
         {
             //lastspawn = Time.time + cooldown;
             spawnedenemy = Instantiate(basicenemy, transform.position, transform.rotation);
-            List<Enemy> randomenemy = new List<Enemy>() { new Enemy() { enemyGameObject = spawnedenemy, enemyname = "basicenemy", hp = 5, speed = 100f, damage = 1 },
-            new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongerenemy", hp = 10, speed = 100f, damage = 2 },
-            new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongestenemy", hp = 20, speed = 100f, damage = 4 } };
+            List<Enemy> randomenemy = new List<Enemy>() { new Enemy() { enemyGameObject = spawnedenemy, enemyname = "basicenemy", hp = 0.5f, speed = 100f, damage = 1 },
+            new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongerenemy", hp = 1f, speed = 100f, damage = 2 },
+            new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongestenemy", hp = 2f, speed = 100f, damage = 4 } };
             ec = randomenemy[Random.Range(0, 3)];
             enemies.Add(ec);
             for (int ii = 0; ii < GameObject.Find("points").transform.childCount; ii++)
@@ -112,7 +112,7 @@ public class spawn : MonoBehaviour
 public class Enemy
 {
     public string enemyname;
-    public int hp;
+    public float hp;
     public float speed;
     public float damage;
     public GameObject enemyGameObject;

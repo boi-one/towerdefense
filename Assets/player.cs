@@ -26,7 +26,7 @@ public class player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        health = 10f;
+        health = 35f;
         thebase = GameObject.Find("thebase");
         GameObject.Find("Canvas").transform.Find("satelietimage").gameObject.SetActive(false);
         points = 100;
