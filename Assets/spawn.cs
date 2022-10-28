@@ -87,7 +87,7 @@ public class spawn : MonoBehaviour
     public IEnumerator Spawning()
     {
         Debug.Log(wavelength);
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 9; i++)
         {
             //lastspawn = Time.time + cooldown;
             spawnedenemy = Instantiate(basicenemy, transform.position, transform.rotation);
