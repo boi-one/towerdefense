@@ -1,5 +1,12 @@
-```mermaid
-graph TD
-    A([start script])-->B(check all enemies position)-->
-    C(check closest)-->E(shoot in direction of closest enemy)-->
-    D(check if enemy is in range)-->Z([end])
+##TOWER DEFENSE GAME
+
+je kan verschillende torens plaatsen
+
+er zijn enemies die geschoten kunnen worden
+als je ze schiet krijg je geld
+
+je kan dingen upgraden
+
+je kan geld cheaten
+
+als je deze repository pulled kan je het builden en spelen
