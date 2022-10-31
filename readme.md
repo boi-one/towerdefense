@@ -1,4 +1,4 @@
-## TOWER DEFENSE GAME
+# TOWER DEFENSE GAME
 
 - je kan verschillende torens plaatsen
 
@@ -11,4 +11,4 @@ als je ze schiet krijg je geld
 
 - als je deze repository pulled kan je het builden en spelen
 
-![screenshot van de game](screenshot.jpg)
+![screenshot van de game](screenshot.png)
