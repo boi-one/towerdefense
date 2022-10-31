@@ -10,3 +10,5 @@ als je ze schiet krijg je geld
 - je kan geld  **cheaten**
 
 - als je deze repository pulled kan je het builden en spelen
+
+![screenshot van de game](screenshot.jpg)
