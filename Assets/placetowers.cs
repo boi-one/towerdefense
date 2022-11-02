@@ -16,7 +16,6 @@ public class placetowers : MonoBehaviour
     public GameObject tower;
 
     float bulletspeed = 10;
-    static public Dictionary<GameObject, Vector3> bulletdict = new Dictionary<GameObject, Vector3>();
     static public List<Tower> spawnedtowers = new List<Tower>();
     public float lastfire = 0f;
     public GameObject bullet;
@@ -109,7 +108,7 @@ public class placetowers : MonoBehaviour
                 lastfire = Time.time + t.cooldown;
                 Debug.Log(spawnedtowers.Count);
                 GameObject ibullet = Instantiate(bullet, t.position, t.towerGameObject.transform.rotation);
-                bulletdict.Add(ibullet, closestenemy.transform.position
+                t.bulletdict.Add(ibullet, closestenemy.transform.position
                     + ((GameObject.Find("spawner").GetComponent<spawn>().ec.points[0].transform.position
                     - closestenemy.transform.position).normalized * Mathf.Pow(closestedist, 1.25f) / 5f) - t.position/*.normalized*/);
                 float dy = t.position.y - closestenemy.transform.position.y;
@@ -117,27 +116,32 @@ public class placetowers : MonoBehaviour
                 ibullet.transform.localEulerAngles = new Vector3(0, 0, Mathf.Atan2(dy, dx) * Mathf.Rad2Deg + 90);//draait de kogels in de richting van de enemy (waarschijnlijk niet meer nodig dankzij trailrenderer)
             }
         }
-        foreach (KeyValuePair<GameObject, Vector3> b in bulletdict)  //beweegt de kogels
-        {
-            b.Key.transform.position += b.Value * Time.deltaTime * bulletspeed;
-        }
+        
         //hitenemy
-        foreach (KeyValuePair<GameObject, Vector3> bt in bulletdict)
+        foreach(Tower t in spawnedtowers)
         {
-            foreach (Enemy e in enemies.ToList())
+            foreach (KeyValuePair<GameObject, Vector3> b in t.bulletdict)  //beweegt de kogels
             {
-                if ((e.enemyGameObject.transform.position - bt.Key.transform.position).magnitude < 1f)
+                b.Key.transform.position += b.Value * Time.deltaTime * bulletspeed;
+            }
+            foreach (KeyValuePair<GameObject, Vector3> bt in t.bulletdict)
+            {
+                foreach (Enemy e in enemies.ToList())
                 {
-                    e.hp -= 0.5f;             //laat de enemies damage krijgen
-                    if (e.hp <= 0)
+                    if ((e.enemyGameObject.transform.position - bt.Key.transform.position).magnitude < 1f)
                     {
-                        enemies.Remove(e);
-                        Destroy(e.enemyGameObject);
-                        GameObject.Find("player").GetComponent<player>().points += 20;
+                        e.hp -= 0.5f;             //laat de enemies damage krijgen
+                        if (e.hp <= 0)
+                        {
+                            enemies.Remove(e);
+                            Destroy(e.enemyGameObject);
+                            GameObject.Find("player").GetComponent<player>().points += 20;
+                        }
                     }
                 }
             }
         }
+        
     }
     public void TowerButton(int button)
     {
@@ -281,5 +285,6 @@ public class Tower
     public float range;
     public int cost;
     public GameObject towerGameObject;
+    public Dictionary<GameObject, Vector3> bulletdict = new Dictionary<GameObject, Vector3>();
     public Vector3 position => towerGameObject.transform.position;
 }

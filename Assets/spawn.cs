@@ -73,11 +73,13 @@ public class spawn : MonoBehaviour
         //timer enemy spawns
         if (System.Convert.ToInt32(timertext.text) > 0)
         {
-            timertext.text = ((int)(120 - (Time.time - lasttime))).ToString();
+            timertext.text = ((int)(300 - (Time.time - lasttime))).ToString();
             if (System.Convert.ToInt32(timertext.text) == 0)
             {
-                StartCoroutine(Spawning());
-                timertext.text = 120.ToString();
+                spawning = true;
+                if(spawning)
+                    StartCoroutine(Spawning());
+                timertext.text = 300.ToString();
             }
             //Debug.Log(wavelength);
         }
@@ -86,7 +88,7 @@ public class spawn : MonoBehaviour
     }
     public IEnumerator Spawning()
     {
-        Debug.Log(wavelength);
+        spawning = false;
         for (int i = 0; i < 9; i++)
         {
             //lastspawn = Time.time + cooldown;
