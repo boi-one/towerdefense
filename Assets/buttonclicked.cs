@@ -359,12 +359,15 @@ public class buttonclicked : MonoBehaviour
     }
     public void StartWave()
     {
-        StartCoroutine(GameObject.Find("spawner").GetComponent<spawn>().Spawning());
+        GameObject.Find("spawner").GetComponent<spawn>().timertext.text = 300.ToString();
+        Debug.Log("300");
+        GameObject.Find("spawner").GetComponent<spawn>().Spawning();
     }
     public void Upgrade1()
     {
         GameObject.Find("player").GetComponent<player>().playerspeed = GameObject.Find("player").GetComponent<player>().playerspeed * 2;
         GameObject.Find("Canvas").transform.Find("bgupgradepanel").transform.Find("upgrade1").gameObject.SetActive(false);
+        GameObject.Find("player").GetComponent<player>().points -= 500;
     }
     public void Upgrade2()
     {
@@ -400,5 +403,6 @@ public class buttonclicked : MonoBehaviour
     {
         GameObject.Find("Canvas").transform.Find("satelietimage").gameObject.SetActive(true);
         GameObject.Find("Canvas").transform.Find("bgupgradepanel").transform.Find("upgrade8").gameObject.SetActive(false);
+        GameObject.Find("player").GetComponent<player>().points -= 2000;
     }
 }

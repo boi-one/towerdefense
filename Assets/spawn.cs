@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ public class spawn : MonoBehaviour
     private int spawns = 5;
     public GameObject basicenemy;
     public bool spawning = false;
+    bool canSetSpawningTrue;
     GameObject deadenemy;
     public TMP_Text timertext;
     float lasttime = 0;
@@ -40,9 +42,6 @@ public class spawn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        wave = true;
-        spawning = false;
-        //Debug.Log(enemies.Count);
         foreach (Enemy se in enemies.ToList()) //zorgt ervoor dat elke enemy het pad volgt
         {
             GameObject.Find("enemy(Clone)").GetComponent<enemyhp>().iehp.transform.position = se.enemyGameObject.transform.position;
@@ -73,29 +72,50 @@ public class spawn : MonoBehaviour
         //timer enemy spawns
         if (System.Convert.ToInt32(timertext.text) > 0)
         {
+            canSetSpawningTrue = true;
             timertext.text = ((int)(300 - (Time.time - lasttime))).ToString();
-            if (System.Convert.ToInt32(timertext.text) == 0)
+        }
+        else if (System.Convert.ToInt32(timertext.text) <= 0)
+        {
+            if (canSetSpawningTrue)
             {
                 spawning = true;
-                if(spawning)
-                    StartCoroutine(Spawning());
-                timertext.text = 300.ToString();
+                canSetSpawningTrue = false;
             }
-            //Debug.Log(wavelength);
+            if (spawning)
+            {
+                Spawning();
+                spawning = false;
+            }
         }
+        else
+            spawning = false;
+        //Debug.Log(timertext.text + " spawning= " + spawning);
+
         if (GameObject.Find("player").GetComponent<player>().health == 0 || GameObject.Find("player").GetComponent<player>().hp.value <= 0)
             SceneManager.LoadScene("Dead");
+        //Debug.Log(Time.time + " cd " + lastspawn);
     }
-    public IEnumerator Spawning()
+    public void Spawning()
     {
         spawning = false;
-        for (int i = 0; i < 9; i++)
+        bool resetTimer = false;
+        int spawns = 0;
+        StartCoroutine(Timer());
+    }
+    IEnumerator Timer() //dit is hoogst waarschijnlijk zeer inefficient
+    {
+        bool resetTimer = false;
+        int spawns = 0;
+        for (int i = 0; i < 8; i++)
         {
-            //lastspawn = Time.time + cooldown;
+            if(i < 8)
+                Debug.Log(i);
+            lastspawn = Time.time + cooldown;
             spawnedenemy = Instantiate(basicenemy, transform.position, transform.rotation);
             List<Enemy> randomenemy = new List<Enemy>() { new Enemy() { enemyGameObject = spawnedenemy, enemyname = "basicenemy", hp = 0.5f, speed = 100f, damage = 1 },
-            new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongerenemy", hp = 1f, speed = 100f, damage = 2 },
-            new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongestenemy", hp = 2f, speed = 100f, damage = 4 } };
+                    new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongerenemy", hp = 1f, speed = 100f, damage = 2 },
+                    new Enemy() { enemyGameObject = spawnedenemy, enemyname = "strongestenemy", hp = 2f, speed = 100f, damage = 4 } };
             ec = randomenemy[Random.Range(0, 3)];
             enemies.Add(ec);
             for (int ii = 0; ii < GameObject.Find("points").transform.childCount; ii++)
@@ -107,8 +127,13 @@ public class spawn : MonoBehaviour
                 ec.enemyGameObject.GetComponent<SpriteRenderer>().color = Color.green;
             if (ec.enemyname == "strongestenemy")
                 ec.enemyGameObject.GetComponent<SpriteRenderer>().color = Color.blue;
-            yield return new WaitForSeconds(0.7f);
-        };
+            if (i == 8)
+            {
+                Debug.Log("BREAK");
+                timertext.text = 300.ToString();
+            }
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 }
 public class Enemy
